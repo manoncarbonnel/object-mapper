@@ -24,7 +24,7 @@ class PropertyPoint extends Point implements SourcePointInterface, TargetPointIn
      */
     public function __construct(string $fqn)
     {
-        $regex = '/([A-Za-z\\\_]+)::\$([A-Za-z_]+)/';
+        $regex = '/([A-Za-z\\\_]+)::\$([A-Za-z\d_]+)/';
 
         if (!preg_match($regex, $fqn, $matches)) {
             throw new InvalidPropertyPointSyntaxException(sprintf(
