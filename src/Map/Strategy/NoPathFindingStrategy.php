@@ -45,6 +45,13 @@ class NoPathFindingStrategy implements PathFindingStrategyInterface
             ));
         }
 
+        $sourceClassReflection = new \ReflectionClass($sourceClassFqn);
+        $parents = array();
+        while ($parent = $sourceClassReflection->getParentClass()) {
+            $parents[] = $parent->getName();
+            $sourceClassReflection = $parent;
+        }
+
         if (!class_exists($targetClassFqn)) {
             throw new InvalidArgumentException(sprintf(
                 'Argument 2 passed to %s is invalid. Class %s does not exist.',
@@ -56,7 +63,7 @@ class NoPathFindingStrategy implements PathFindingStrategyInterface
         $routeCollection = new RouteCollection();
 
         foreach ($this->mapDefinition->getRouteCollection() as $route) {
-            if ($sourceClassFqn === $route->getSourcePoint()->getClassFqn() && $targetClassFqn === $route->getTargetPoint()->getClassFqn()) {
+            if (($sourceClassFqn === $route->getSourcePoint()->getClassFqn() || in_array($route->getSourcePoint()->getClassFqn(), $parents)) && $targetClassFqn === $route->getTargetPoint()->getClassFqn()) {
                 $routeCollection->addRoute($route);
             }
         }
